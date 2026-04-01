@@ -13,7 +13,7 @@ class MilesOfSmilesTest {
 
     @Test
     void handle() {
-        String hello = milesOfSmiles.handle(memoryId, isNewSession, "你好");
+        String hello = milesOfSmiles.handle(1,  "你好");
         System.out.println(hello);
     }
 }
