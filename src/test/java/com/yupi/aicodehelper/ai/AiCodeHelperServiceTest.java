@@ -62,4 +62,12 @@ class AiCodeHelperServiceTest {
         String result = aiCodeHelperService.chat("kill the game");
         System.out.println(result);
     }
+
+    @Test
+    void analyzeEmotion() {
+        AiCodeHelperService.Emotion result = aiCodeHelperService.analyzeEmotion("今天天气正好!");
+        System.out.println(result);
+        AiCodeHelperService.Emotion result2 = aiCodeHelperService.analyzeEmotion("糟糕，今天下雨，不能出去玩了!");
+        System.out.println(result2);
+    }
 }

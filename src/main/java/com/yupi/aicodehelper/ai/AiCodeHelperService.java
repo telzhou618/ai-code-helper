@@ -26,4 +26,15 @@ public interface AiCodeHelperService {
     // 流式对话
     @SystemMessage(fromResource = "system-prompt.txt")
     Flux<String> chatStream(@MemoryId int memoryId, @UserMessage String userMessage);
+
+    /**
+     * 分析文本情绪
+     * 框架会自动将 LLM 返回的文本（如 "HAPPY"）转换为 Emotion 枚举实例
+     */
+    @UserMessage("分析以下文本的情绪，只返回 HAPPY、SAD、ANGRY 或 NEUTRAL 中的一个：{{text}}")
+    Emotion analyzeEmotion(String text);
+
+    public enum Emotion {
+        HAPPY, SAD, ANGRY, NEUTRAL;
+    }
 }
