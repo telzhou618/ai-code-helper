@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 加载 RAG
  */
-@Configuration
+//@Configuration
 public class RagConfig {
 
     @Resource

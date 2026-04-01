@@ -1,7 +1,9 @@
 package com.yupi.aicodehelper.ai.model;
 
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
+import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -26,6 +28,15 @@ public class QwenChatModelConfig {
     @Bean
     public ChatModel myQwenChatModel() {
         return QwenChatModel.builder()
+                .apiKey(apiKey)
+                .modelName(modelName)
+                .listeners(List.of(chatModelListener))
+                .build();
+    }
+
+    @Bean
+    public StreamingChatModel myQwenStreamChatModel() {
+        return QwenStreamingChatModel.builder()
                 .apiKey(apiKey)
                 .modelName(modelName)
                 .listeners(List.of(chatModelListener))
