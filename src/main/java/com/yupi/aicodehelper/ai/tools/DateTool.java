@@ -14,6 +14,7 @@ public class DateTool {
             """
     )
     public String getCurrentDate() {
-        return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                + ",星期" + LocalDate.now().getDayOfWeek().getValue();
     }
 }
