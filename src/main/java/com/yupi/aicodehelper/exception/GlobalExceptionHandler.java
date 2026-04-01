@@ -1,4 +1,4 @@
-package com.yupi.aicodehelper.controller;
+package com.yupi.aicodehelper.exception;
 
 import dev.langchain4j.guardrail.InputGuardrailException;
 import org.springframework.http.HttpStatus;
