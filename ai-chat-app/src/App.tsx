@@ -13,6 +13,7 @@ function App() {
     sessions,
     currentSession,
     setCurrentSession,
+    deleteSession,
     isCurrentSessionNew,
     markCurrentSessionUsed,
     isLoading: sessionsLoading,
@@ -50,6 +51,17 @@ function App() {
   };
 
   /**
+   * 处理删除会话
+   */
+  const handleDeleteSession = async (session: typeof currentSession) => {
+    try {
+      await deleteSession(session.memoryId);
+    } catch (error) {
+      // 删除失败已在 Hook 中打印日志
+    }
+  };
+
+  /**
    * 处理登出
    */
   const handleLogout = () => {
@@ -73,6 +85,7 @@ function App() {
         currentSession={currentSession}
         onSessionSelect={handleSessionSelect}
         onNewSession={handleNewSession}
+        onDeleteSession={handleDeleteSession}
       />
 
       {/* 主内容区 */}

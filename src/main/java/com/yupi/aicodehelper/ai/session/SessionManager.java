@@ -36,4 +36,11 @@ public class SessionManager {
         redisTemplate.opsForValue().set("chat:sessions", JSON.toJSONString(sessions), Duration.ofDays(1));
     }
 
+    public void deleteSession(int memoryId) {
+        List<UserSession> sessions = getSessions();
+        if (sessions != null && !sessions.isEmpty()) {
+            sessions = sessions.stream().filter(session -> session.memoryId() != memoryId).toList();
+            redisTemplate.opsForValue().set("chat:sessions", JSON.toJSONString(sessions), Duration.ofDays(1));
+        }
+    }
 }

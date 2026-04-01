@@ -57,6 +57,13 @@ public class AiController {
         return ChatMessageSerializer.messagesToJson(messages);
     }
 
+    @GetMapping("/delSession")
+    public String delSession(int memoryId) {
+        memoryStore.deleteMessages(memoryId);
+        sessionManager.deleteSession(memoryId);
+        return "success";
+    }
+
     private Flux<ServerSentEvent<String>> handleStreamError(Throwable e) {
         String errorMsg;
         if (e instanceof InputGuardrailException) {

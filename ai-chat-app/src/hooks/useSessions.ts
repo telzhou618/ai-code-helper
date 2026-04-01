@@ -9,6 +9,7 @@ interface UseSessionsReturn {
   currentSession: Session;
   setCurrentSession: (session: Session) => void;
   createNewSession: () => Session;
+  deleteSession: (memoryId: string) => Promise<void>;
   isCurrentSessionNew: boolean;
   markCurrentSessionUsed: () => void;
   isLoading: boolean;
@@ -86,6 +87,47 @@ export const useSessions = (): UseSessionsReturn => {
     return newSession;
   }, [sessions.length]);
 
+  /**
+   * 删除会话
+   */
+  const deleteSession = useCallback(async (memoryId: string): Promise<void> => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/delSession?memoryId=${encodeURIComponent(memoryId)}`
+      );
+      if (!response.ok) {
+        throw new Error(`删除会话失败: ${response.status}`);
+      }
+
+      setSessions((prev) => {
+        const remaining = prev.filter((s) => s.memoryId !== memoryId);
+
+        // 如果删除的是当前会话，自动切换到剩余会话的第一个，或刷新到新会话
+        if (currentSession && currentSession.memoryId === memoryId) {
+          if (remaining.length > 0) {
+            const nextSession = remaining[0];
+            setCurrentSessionState(nextSession);
+            setNewSessionIds((ids) => {
+              const next = new Set(ids);
+              next.delete(nextSession.memoryId);
+              return next;
+            });
+            updateUrl(nextSession.memoryId);
+          } else {
+            // 没有会话了，刷新页面创建新会话
+            const newMemoryId = generateMemoryId();
+            window.location.href = `${window.location.pathname}?memoryId=${newMemoryId}`;
+          }
+        }
+
+        return remaining;
+      });
+    } catch (error) {
+      console.error('删除会话失败:', error);
+      throw error;
+    }
+  }, [currentSession]);
+
   // 初始加载会话列表
   useEffect(() => {
     const fetchSessions = async () => {
@@ -162,6 +204,7 @@ export const useSessions = (): UseSessionsReturn => {
     currentSession: safeCurrentSession,
     setCurrentSession,
     createNewSession,
+    deleteSession,
     isCurrentSessionNew,
     markCurrentSessionUsed,
     isLoading,

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Session } from '../types';
 
 interface SidebarProps {
@@ -7,6 +7,7 @@ interface SidebarProps {
   currentSession: Session;
   onSessionSelect: (session: Session) => void;
   onNewSession: () => void;
+  onDeleteSession?: (session: Session) => void;
 }
 
 /**
@@ -18,7 +19,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentSession,
   onSessionSelect,
   onNewSession,
+  onDeleteSession,
 }) => {
+  const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null);
+
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
       {/* 新建会话按钮 */}
@@ -39,17 +43,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <div className="space-y-1 px-2">
           {sessions.map((session, index) => (
-            <button
+            <div
               key={session.id}
-              onClick={() => onSessionSelect(session)}
-              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                currentSession.id === session.id
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              className="relative"
+              onMouseEnter={() => setHoveredSessionId(session.id)}
+              onMouseLeave={() => setHoveredSessionId(null)}
             >
-              {index + 1}.{session.title}
-            </button>
+              <button
+                onClick={() => onSessionSelect(session)}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors pr-8 ${
+                  currentSession.id === session.id
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {index + 1}.{session.title}
+              </button>
+
+              {hoveredSessionId === session.id && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteSession?.(session);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-red-500 transition-colors"
+                  title="删除会话"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>
