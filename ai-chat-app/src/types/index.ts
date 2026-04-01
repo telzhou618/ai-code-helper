@@ -23,3 +23,20 @@ export interface Session {
  * 反馈类型
  */
 export type FeedbackType = 'like' | 'dislike';
+
+/**
+ * 历史消息内容项
+ */
+export interface HistoryMessageContent {
+  text: string;
+  type: string;
+}
+
+/**
+ * 后端返回的单条历史消息
+ */
+export interface HistoryMessage {
+  text?: string;
+  contents?: HistoryMessageContent[];
+  type: 'SYSTEM' | 'USER' | 'AI';
+}

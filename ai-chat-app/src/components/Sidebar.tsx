@@ -48,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              {index + 1}、{session.title}
+              {index + 1}.{session.title}
             </button>
           ))}
         </div>

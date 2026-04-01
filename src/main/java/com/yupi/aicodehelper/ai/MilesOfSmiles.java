@@ -33,7 +33,6 @@ public class MilesOfSmiles {
             sessionManager.addSession(new UserSession(memoryId,
                     message == null || message.isBlank() ? "新建会话" : message,
                     new Date()));
-            return Flux.just("你好，有什么我可以帮忙的吗？");
         }
         if (aiGreetingExpertService.isGreeting(message)) {
             return Flux.just("你好，想聊点什么呢");

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Message } from '../types';
+import { Message, HistoryMessage } from '../types';
 import { generateId } from '../utils/date';
+
+const API_BASE = 'http://localhost:8081/api/ai';
 
 interface UseChatProps {
   memoryId: string;
@@ -28,6 +30,24 @@ const createWelcomeMessage = (): Message => ({
 });
 
 /**
+ * 将后端历史消息映射为前端消息格式
+ * 仅保留 USER 和 AI 类型，过滤 SYSTEM
+ */
+const mapHistoryMessages = (history: HistoryMessage[]): Message[] => {
+  return history
+    .filter((msg) => msg.type === 'USER' || msg.type === 'AI')
+    .map((msg) => ({
+      id: generateId(),
+      role: msg.type === 'USER' ? 'user' : 'assistant',
+      content:
+        msg.type === 'USER'
+          ? (msg.contents?.map((c) => c.text).join('') || '')
+          : (msg.text || ''),
+      timestamp: new Date(),
+    }));
+};
+
+/**
  * 聊天逻辑 Hook
  */
 export const useChat = ({ memoryId, isNewSession, onFirstMessageSent }: UseChatProps): UseChatReturn => {
@@ -39,9 +59,45 @@ export const useChat = ({ memoryId, isNewSession, onFirstMessageSent }: UseChatP
   const [hasSentMessage, setHasSentMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 当会话切换时，重置已发送标记
+  // 根据 memoryId 加载历史消息或重置为新会话
   useEffect(() => {
+    setInputMessage('');
     setHasSentMessage(false);
+
+    if (isNewSession || !memoryId) {
+      setMessages([createWelcomeMessage()]);
+      return;
+    }
+
+    const loadHistoryMessages = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE}/getSessionMessages?memoryId=${encodeURIComponent(memoryId)}`
+        );
+        if (!response.ok) {
+          throw new Error(`获取历史消息失败: ${response.status}`);
+        }
+
+        const text = await response.text();
+        const data: HistoryMessage[] = text ? JSON.parse(text) : [];
+
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = mapHistoryMessages(data);
+          if (mapped.length > 0) {
+            setMessages(mapped);
+          } else {
+            setMessages([createWelcomeMessage()]);
+          }
+        } else {
+          setMessages([createWelcomeMessage()]);
+        }
+      } catch (error) {
+        console.error('加载历史消息失败:', error);
+        setMessages([createWelcomeMessage()]);
+      }
+    };
+
+    loadHistoryMessages();
   }, [memoryId, isNewSession]);
 
   // 滚动到底部
@@ -83,7 +139,7 @@ export const useChat = ({ memoryId, isNewSession, onFirstMessageSent }: UseChatP
 
     try {
       // 调用 SSE 接口
-      let url = `http://localhost:8081/api/ai/chat?memoryId=${encodeURIComponent(memoryId)}&message=${encodeURIComponent(inputMessage)}`;
+      let url = `${API_BASE}/chat?memoryId=${encodeURIComponent(memoryId)}&message=${encodeURIComponent(inputMessage)}`;
       if (effectiveIsNewSession) {
         url += '&isNewSession=true';
       }

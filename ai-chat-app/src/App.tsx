@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Sidebar, Header, ChatArea, ChatInput, Footer } from './components';
 import { useSessions } from './hooks/useSessions';
 import { useChat } from './hooks/useChat';
+import { generateMemoryId } from './utils/date';
 
 /**
  * 智能客服应用主组件
@@ -12,7 +13,6 @@ function App() {
     sessions,
     currentSession,
     setCurrentSession,
-    createNewSession,
     isCurrentSessionNew,
     markCurrentSessionUsed,
     isLoading: sessionsLoading,
@@ -26,7 +26,6 @@ function App() {
     setInputMessage,
     sendMessage,
     handleFeedback,
-    resetMessages,
     messagesEndRef,
   } = useChat({
     memoryId: currentSession.memoryId,
@@ -34,16 +33,13 @@ function App() {
     onFirstMessageSent: markCurrentSessionUsed,
   });
 
-  // 切换会话时重置消息
-  useEffect(() => {
-    resetMessages();
-  }, [currentSession.id, resetMessages]);
-
   /**
    * 处理新建会话
+   * 生成新 memoryId 后直接刷新页面
    */
   const handleNewSession = () => {
-    createNewSession();
+    const newMemoryId = generateMemoryId();
+    window.location.href = `${window.location.pathname}?memoryId=${newMemoryId}`;
   };
 
   /**
