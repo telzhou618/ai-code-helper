@@ -53,7 +53,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <span className="text-sm text-gray-600 flex items-center gap-1">
-                <Search size={14} />
+
                 联网搜索
               </span>
             </label>

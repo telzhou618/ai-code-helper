@@ -31,26 +31,26 @@ public class AiCodeHelperServiceFactory {
     private ChatMemoryStore persistentChatMemoryStore;
 
     @Bean
-    public AiCodeHelperService aiCodeHelperService() {
-        // 会话记忆
-        ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
+    public AiCodeHelperService aiCodeHelperService(ChatMemoryProvider myChatMemoryProvider) {
+
+        // 构造 AI Service
+        return AiServices.builder(AiCodeHelperService.class)
+                .chatModel(myQwenChatModel)  // 聊天模型
+                .streamingChatModel(myQwenStreamChatModel) // 流式聊天模型
+                .chatMemoryProvider(myChatMemoryProvider)  // 聊天记忆提供者
+                .tools(new InterviewQuestionTool(), new DateTool()) // 工具调用
+//                .contentRetriever(contentRetriever) // RAG 检索增强生成
+//                .toolProvider(mcpToolProvider) // MCP 工具调用
+                .build();
+    }
+
+    @Bean
+    public ChatMemoryProvider myChatMemoryProvider() {
+        return memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryId)
                 .maxMessages(10)
                 .chatMemoryStore(persistentChatMemoryStore)
                 .build();
-
-        // 构造 AI Service
-        AiCodeHelperService aiCodeHelperService = AiServices.builder(AiCodeHelperService.class)
-                .chatModel(myQwenChatModel)
-                .streamingChatModel(myQwenStreamChatModel)
-                .chatMemoryProvider(chatMemoryProvider)
-//                .chatMemory(chatMemory)
-//                .chatMemoryProvider(memoryId ->
-//                        MessageWindowChatMemory.withMaxMessages(10)) // 每个会话独立存储
-//                .contentRetriever(contentRetriever) // RAG 检索增强生成
-                .tools(new InterviewQuestionTool(), new DateTool()) // 工具调用
-//                .toolProvider(mcpToolProvider) // MCP 工具调用
-                .build();
-        return aiCodeHelperService;
     }
+
 }
