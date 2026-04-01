@@ -1,4 +1,4 @@
-# 🤖 AI 编程小助手 - LangChain4j 实战项目
+# 🤖 AI 编程小助手 - LangChain4j 实战项目（学习）
 
 > 基于 LangChain4j + 通义千问的 AI 智能编程学习与求职辅导机器人
 
@@ -21,7 +21,7 @@
 
 ⭐ 如果这个项目对您有帮助，请给鱼皮一个 Star，这会激励我继续爆肝输出更多干货教程，万分感谢！ 
 
-![](https://pic.yupi.icu/1/AI%E7%BC%96%E7%A8%8B%E5%B0%8F%E5%8A%A9%E6%89%8B%E9%A1%B9%E7%9B%AE.png)
+![img.png](imgs/img.png)
 
 本项目中，会话记忆、结构化输出、RAG、工具调用、MCP、护轨、可观测性、AI 代码生成等等，都有从 0 的讲解和实践。
 
