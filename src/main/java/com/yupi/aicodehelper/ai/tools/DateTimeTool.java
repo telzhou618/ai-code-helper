@@ -7,14 +7,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
-public class DateTool {
+public class DateTimeTool {
 
-    @Tool(name = "getCurrentDate", value = """
-            获取当前的日期
+    @Tool(name = "getCurrentDateTime", value = """
+            get current date and time
             """
     )
-    public String getCurrentDate() {
-        return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    public String getCurrentDateTime() {
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 + ",星期" + LocalDate.now().getDayOfWeek().getValue();
     }
 }

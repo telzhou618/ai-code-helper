@@ -1,6 +1,6 @@
 package com.yupi.aicodehelper.ai;
 
-import com.yupi.aicodehelper.ai.tools.DateTool;
+import com.yupi.aicodehelper.ai.tools.DateTimeTool;
 import com.yupi.aicodehelper.ai.tools.InterviewQuestionTool;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -38,7 +38,7 @@ public class AiCodeHelperServiceFactory {
                 .chatModel(myQwenChatModel)  // 聊天模型
                 .streamingChatModel(myQwenStreamChatModel) // 流式聊天模型
                 .chatMemoryProvider(myChatMemoryProvider)  // 聊天记忆提供者
-                .tools(new InterviewQuestionTool(), new DateTool()) // 工具调用
+                .tools(new InterviewQuestionTool(), new DateTimeTool()) // 工具调用
 //                .contentRetriever(contentRetriever) // RAG 检索增强生成
 //                .toolProvider(mcpToolProvider) // MCP 工具调用
                 .build();
