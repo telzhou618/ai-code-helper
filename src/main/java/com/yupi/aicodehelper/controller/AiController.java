@@ -2,13 +2,21 @@ package com.yupi.aicodehelper.controller;
 
 import com.yupi.aicodehelper.ai.AiCodeHelperService;
 import com.yupi.aicodehelper.ai.MilesOfSmiles;
+import com.yupi.aicodehelper.ai.data.UserSession;
+import com.yupi.aicodehelper.ai.session.SessionManager;
+import com.yupi.aicodehelper.ai.store.PersistentChatMemoryStore;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.ChatMessageSerializer;
 import dev.langchain4j.guardrail.InputGuardrailException;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/ai")
@@ -18,11 +26,17 @@ public class AiController {
     private AiCodeHelperService aiCodeHelperService;
     @Resource
     private MilesOfSmiles milesOfSmiles;
+    @Resource
+    private SessionManager sessionManager;
+    @Autowired
+    private PersistentChatMemoryStore memoryStore;
 
     @GetMapping("/chat")
-    public Flux<ServerSentEvent<String>> chat(int memoryId, String message) {
+    public Flux<ServerSentEvent<String>> chat(int memoryId,
+                                              Boolean isNewSession,
+                                              String message) {
         try {
-            return milesOfSmiles.handle(memoryId, message)
+            return milesOfSmiles.handleStream(memoryId, isNewSession, message)
                     .map(chunk -> ServerSentEvent.<String>builder()
                             .data(chunk)
                             .build())
@@ -30,6 +44,17 @@ public class AiController {
         } catch (Exception e) {
             return handleStreamError(e);
         }
+    }
+
+    @GetMapping("/getSessions")
+    public List<UserSession> getSessions() {
+        return sessionManager.getSessions();
+    }
+
+    @GetMapping("/getSessionMessages")
+    public String getSessionMessages(int memoryId) {
+        List<ChatMessage> messages = memoryStore.getMessages(memoryId);
+        return ChatMessageSerializer.messagesToJson(messages);
     }
 
     private Flux<ServerSentEvent<String>> handleStreamError(Throwable e) {

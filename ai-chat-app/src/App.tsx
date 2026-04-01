@@ -13,6 +13,9 @@ function App() {
     currentSession,
     setCurrentSession,
     createNewSession,
+    isCurrentSessionNew,
+    markCurrentSessionUsed,
+    isLoading: sessionsLoading,
   } = useSessions();
 
   // 聊天逻辑
@@ -25,7 +28,11 @@ function App() {
     handleFeedback,
     resetMessages,
     messagesEndRef,
-  } = useChat({ memoryId: currentSession.memoryId });
+  } = useChat({
+    memoryId: currentSession.memoryId,
+    isNewSession: isCurrentSessionNew,
+    onFirstMessageSent: markCurrentSessionUsed,
+  });
 
   // 切换会话时重置消息
   useEffect(() => {
@@ -53,6 +60,14 @@ function App() {
     // TODO: 实现登出逻辑
     console.log('用户登出');
   };
+
+  if (sessionsLoading) {
+    return (
+      <div className="flex h-screen bg-gray-50 items-center justify-center">
+        <div className="text-gray-500">加载中...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">

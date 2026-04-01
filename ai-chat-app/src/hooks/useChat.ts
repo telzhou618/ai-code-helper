@@ -4,6 +4,8 @@ import { generateId } from '../utils/date';
 
 interface UseChatProps {
   memoryId: string;
+  isNewSession: boolean;
+  onFirstMessageSent?: () => void;
 }
 
 interface UseChatReturn {
@@ -28,13 +30,19 @@ const createWelcomeMessage = (): Message => ({
 /**
  * 聊天逻辑 Hook
  */
-export const useChat = ({ memoryId }: UseChatProps): UseChatReturn => {
+export const useChat = ({ memoryId, isNewSession, onFirstMessageSent }: UseChatProps): UseChatReturn => {
   const [messages, setMessages] = useState<Message[]>([
     createWelcomeMessage(),
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSentMessage, setHasSentMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 当会话切换时，重置已发送标记
+  useEffect(() => {
+    setHasSentMessage(false);
+  }, [memoryId, isNewSession]);
 
   // 滚动到底部
   const scrollToBottom = useCallback(() => {
@@ -71,9 +79,14 @@ export const useChat = ({ memoryId }: UseChatProps): UseChatReturn => {
     setInputMessage('');
     setIsLoading(true);
 
+    const effectiveIsNewSession = isNewSession && !hasSentMessage;
+
     try {
       // 调用 SSE 接口
-      const url = `http://localhost:8081/api/ai/chat?memoryId=${memoryId}&message=${encodeURIComponent(inputMessage)}`;
+      let url = `http://localhost:8081/api/ai/chat?memoryId=${encodeURIComponent(memoryId)}&message=${encodeURIComponent(inputMessage)}`;
+      if (effectiveIsNewSession) {
+        url += '&isNewSession=true';
+      }
       const eventSource = new EventSource(url);
 
       eventSource.onmessage = (event) => {
@@ -110,7 +123,13 @@ export const useChat = ({ memoryId }: UseChatProps): UseChatReturn => {
       console.error('发送消息失败:', error);
       setIsLoading(false);
     }
-  }, [inputMessage, isLoading, memoryId]);
+
+    // 标记当前会话已发送过消息，并通知外部
+    if (effectiveIsNewSession) {
+      onFirstMessageSent?.();
+    }
+    setHasSentMessage(true);
+  }, [inputMessage, isLoading, memoryId, isNewSession, hasSentMessage, onFirstMessageSent]);
 
   /**
    * 处理反馈
