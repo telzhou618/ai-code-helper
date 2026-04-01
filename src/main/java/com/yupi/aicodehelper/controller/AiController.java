@@ -1,6 +1,7 @@
 package com.yupi.aicodehelper.controller;
 
 import com.yupi.aicodehelper.ai.AiCodeHelperService;
+import com.yupi.aicodehelper.ai.MilesOfSmiles;
 import dev.langchain4j.guardrail.InputGuardrailException;
 import jakarta.annotation.Resource;
 import org.springframework.http.codec.ServerSentEvent;
@@ -15,11 +16,13 @@ public class AiController {
 
     @Resource
     private AiCodeHelperService aiCodeHelperService;
+    @Resource
+    private MilesOfSmiles milesOfSmiles;
 
     @GetMapping("/chat")
     public Flux<ServerSentEvent<String>> chat(int memoryId, String message) {
         try {
-            return aiCodeHelperService.chatStream(memoryId, message)
+            return milesOfSmiles.handle(memoryId, message)
                     .map(chunk -> ServerSentEvent.<String>builder()
                             .data(chunk)
                             .build())
