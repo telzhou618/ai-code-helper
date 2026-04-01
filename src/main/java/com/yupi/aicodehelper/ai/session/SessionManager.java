@@ -32,7 +32,7 @@ public class SessionManager {
         if (userSession == null || sessions.isEmpty()) {
             sessions = new ArrayList<>();
         }
-        sessions.add(userSession);
+        sessions.addFirst(userSession);
         redisTemplate.opsForValue().set("chat:sessions", JSON.toJSONString(sessions), Duration.ofDays(1));
     }
 
