@@ -1,5 +1,6 @@
 package com.yupi.aicodehelper.ai;
 
+import com.yupi.aicodehelper.ai.data.Report;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.service.Result;
 import jakarta.annotation.Resource;
@@ -7,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AiCodeHelperServiceTest {
@@ -33,7 +32,7 @@ class AiCodeHelperServiceTest {
     @Test
     void chatForReport() {
         String userMessage = "你好，我是程序员鱼皮，学编程两年半，请帮我制定学习报告";
-        AiCodeHelperService.Report report = aiCodeHelperService.chatForReport(userMessage);
+        Report report = aiCodeHelperService.chatForReport(userMessage);
         System.out.println(report);
     }
 
