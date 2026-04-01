@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
     <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center gap-2">
         <Menu className="text-gray-600" size={20} />
-        <h1 className="text-lg font-semibold text-gray-800">智能客服平台</h1>
+        <h1 className="text-lg font-semibold text-gray-800">AI 编程小助手</h1>
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">

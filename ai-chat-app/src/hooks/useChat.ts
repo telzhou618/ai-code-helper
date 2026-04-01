@@ -25,7 +25,7 @@ interface UseChatReturn {
 const createWelcomeMessage = (): Message => ({
   id: generateId(),
   role: 'assistant',
-  content: '我是智能客服助手，请问有什么可以帮您？',
+  content: '我是AI 编程小助手，请问有什么可以帮您？',
   timestamp: new Date(),
 });
 
