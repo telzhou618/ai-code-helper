@@ -1,0 +1,43 @@
+langchain4j:
+  community:
+    dashscope:
+      chat-model:
+        model-name: qwen-max
+        api-key: ${DASHSCOPE_API_KEY}
+      streaming-chat-model:
+        model-name: qwen-max
+        api-key: ${DASHSCOPE_API_KEY}
+      embedding-model:
+        model-name: text-embedding-v4
+        api-key: ${DASHSCOPE_API_KEY}
+
+bigmodel:
+  api-key: <Your API Key>
+
+spring:
+  data:
+    redis:
+      # 基本配置
+      host: localhost
+      port: 6379
+      password:  # 有密码时填写
+      database: 0  # 默认使用 0 号数据库
+
+      # 连接池配置
+      lettuce:
+        pool:
+          max-active: 8      # 最大连接数
+          max-idle: 8        # 最大空闲连接
+          min-idle: 0        # 最小空闲连接
+          max-wait: -1ms     # 连接等待时间
+
+      # 连接超时
+      timeout: 2000ms
+      connect-timeout: 2000ms
+
+logging:
+  level:
+    root: INFO
+    dev.langchain4j: DEBUG
+    com.yupi.aicodehelper: DEBUG
+
