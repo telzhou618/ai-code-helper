@@ -41,3 +41,6 @@ logging:
     dev.langchain4j: DEBUG
     com.yupi.aicodehelper: DEBUG
 
+chroma:
+  base-url: http://10.225.21.234:8000
+  collection-name: code-help-rag-db
